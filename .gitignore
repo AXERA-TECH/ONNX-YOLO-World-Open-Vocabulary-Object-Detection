@@ -156,3 +156,6 @@ cython_debug/
 *.pt
 *.pth
 *.npy
+*.bin
+ultralytics
+third_party
