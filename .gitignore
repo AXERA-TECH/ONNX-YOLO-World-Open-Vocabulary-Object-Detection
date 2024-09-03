@@ -159,3 +159,4 @@ cython_debug/
 *.bin
 ultralytics
 third_party
+tmp

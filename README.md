@@ -2,6 +2,12 @@
 ```
 ./export.sh
 ```
+
+# Step 3
+如果要转换到爱芯平台，用这个生成文本量化数据
+```
+./pack_tar_calib_data.sh
+```
 # Step two
 ```
                            _ooOoo_
