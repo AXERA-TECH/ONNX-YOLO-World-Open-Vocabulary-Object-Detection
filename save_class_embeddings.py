@@ -21,7 +21,7 @@ def main():
     classes = [class_name.replace("-", " ").replace("_", " ") for class_name in args.classes]
 
     # Get text embeddings
-    class_embeddings = text_embedder(classes)
+    class_embeddings = text_embedder.embed_text(classes)
 
     # Convert to numpy array
     class_embeddings = class_embeddings.cpu().numpy().astype(np.float32)

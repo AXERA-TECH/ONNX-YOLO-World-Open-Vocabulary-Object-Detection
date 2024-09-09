@@ -160,3 +160,4 @@ cython_debug/
 ultralytics
 third_party
 tmp
+*.tar

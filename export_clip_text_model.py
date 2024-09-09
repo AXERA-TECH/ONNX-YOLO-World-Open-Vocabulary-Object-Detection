@@ -1,8 +1,18 @@
 from argparse import ArgumentParser
 import numpy as np
-import os
-
+import torch,os
 from yoloworld import TextEmbedder
+
+
+
+# Initialize text embedder
+text_embedder = TextEmbedder(device="cpu")
+
+text_token = text_embedder.tokenize("cat")
+
+torch.onnx.export(text_embedder, text_token, "models/yoloworld.vitb.txt.onnx")
+os.system("onnxsim models/yoloworld.vitb.txt.onnx models/yoloworld.vitb.txt.onnx")
+
 
 coco_names = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic light",
     "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow",
@@ -21,10 +31,8 @@ prefixs = ["",
           "a photo of ", "a photo of a ", "a photo of an ",
           ]
 
-# Initialize text embedder
-text_embedder = TextEmbedder(device="cpu")
 
-os.makedirs("tmp", exist_ok=True)
+os.makedirs("tokens", exist_ok=True)
 
 for class_name_ in coco_names:
     
@@ -33,16 +41,10 @@ for class_name_ in coco_names:
         class_name = prefix + class_name_
 
         # Get text embeddings
-        class_embeddings = text_embedder.embed_text(class_name)
+        text_token = text_embedder.tokenize(class_name).cpu().numpy()
 
-        # Convert to numpy array
-        class_embeddings = class_embeddings.cpu().numpy().astype(np.float32)
-        
-        np.savez(f"tmp/{class_name.replace(' ', '_')}.npz", class_embeddings=class_embeddings)
-        np.save(f"tmp/{class_name.replace(' ', '_')}.npy", class_embeddings)
-        with open(f"tmp/{class_name.replace(' ', '_')}.bin", "wb") as f:
-            f.write(class_embeddings.tobytes())
+        np.save(f"tokens/{class_name.replace(' ', '_')}.npy", text_token)
 
-
+os.system("tar -cvf yolo_world_calib_token_data.tar tokens/*.npy")
 
 
