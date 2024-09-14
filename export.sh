@@ -2,7 +2,9 @@ if [ ! -f "yolov8s-worldv2.pt" ]; then
     wget https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8s-worldv2.pt
 fi
 
-mkdir third_party
+if [ ! -d "third_party" ]; then
+    mkdir third_party
+fi
 cd third_party
 if [ ! -d "ultralytics" ]; then
     git clone https://github.com/ZHEQIUSHUI/ultralytics.git
