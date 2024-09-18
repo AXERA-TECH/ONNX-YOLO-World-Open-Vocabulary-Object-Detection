@@ -14,35 +14,27 @@ coco_names = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "trai
     "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear",
     "hair drier", "toothbrush"]
 
-prefixs = ["",
-          "a ","an ",
-          "a picture of ", "a picture of a ", "a picture of an ",
-          "a image of ", "a image of a ", "a image of an ",
-          "a photo of ", "a photo of a ", "a photo of an ",
-          ]
 
 # Initialize text embedder
 text_embedder = TextEmbedder(device="cpu")
 
 os.makedirs("tmp", exist_ok=True)
 
-for class_name_ in coco_names:
+coco_names_group4 = [coco_names[i:i+4] for i in range(0, len(coco_names), 4)]
+
+print(coco_names_group4)
+
+for class_name_ in coco_names_group4:
+    print(f"Saving {class_name_}")
+    class_name = class_name_[0]
+
+    # Get text embeddings
+    class_embeddings = text_embedder.embed_text(class_name_)
+
+    # Convert to numpy array
+    class_embeddings = class_embeddings.cpu().numpy().astype(np.float32)
     
-    for prefix in prefixs:
-        print(f"Saving {prefix}{class_name_}")
-        class_name = prefix + class_name_
-
-        # Get text embeddings
-        class_embeddings = text_embedder.embed_text(class_name)
-
-        # Convert to numpy array
-        class_embeddings = class_embeddings.cpu().numpy().astype(np.float32)
-        
-        np.savez(f"tmp/{class_name.replace(' ', '_')}.npz", class_embeddings=class_embeddings)
-        np.save(f"tmp/{class_name.replace(' ', '_')}.npy", class_embeddings)
-        with open(f"tmp/{class_name.replace(' ', '_')}.bin", "wb") as f:
-            f.write(class_embeddings.tobytes())
-
-
-
-
+    np.savez(f"tmp/{class_name.replace(' ', '_')}.npz", class_embeddings=class_embeddings, class_list=np.array(class_name_))
+    np.save(f"tmp/{class_name.replace(' ', '_')}.npy", class_embeddings)
+    with open(f"tmp/{class_name.replace(' ', '_')}.bin", "wb") as f:
+        f.write(class_embeddings.tobytes())

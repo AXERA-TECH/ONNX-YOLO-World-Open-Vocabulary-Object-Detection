@@ -17,5 +17,8 @@ cd ../
 if [ ! -d "ultralytics" ]; then
     ln -s third_party/ultralytics/ultralytics .
 fi
-python export_ultralytics_model.py --img_height 640 --model_name yolov8s-worldv2.pt
-onnxsim models/yolov8s-worldv2.onnx models/yolov8s-worldv2.onnx 
+
+cp yoloworld/ModelExporter_ax.py yoloworld/ModelExporter.py
+
+python export_ultralytics_model.py --img_height 640 --img_width 640 --num_classes 4 --model_name yolov8s-worldv2.pt 
+onnxsim models/yolov8s-worldv2.onnx models/yolov8s-worldv2-ax.onnx
