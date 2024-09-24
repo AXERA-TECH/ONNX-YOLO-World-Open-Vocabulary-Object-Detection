@@ -65,7 +65,7 @@ tar -cvf yolo_world_calib_txt_data.tar tmp/*.npy
 
 - 图片检测模型：yolov8s-worldv2-original.onnx
 - 输入图片：ssd_horse.jpg
-- 输入文本：person.npz, 对应的 4 分类 `'dog' 'horse' 'sheep' 'cow'`
+- 输入文本：dog.npz, 对应的 4 分类 `'dog' 'horse' 'sheep' 'cow'`
 
 ```
 python image_object_detection.py
