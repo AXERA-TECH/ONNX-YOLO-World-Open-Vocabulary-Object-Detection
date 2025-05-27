@@ -4,7 +4,7 @@ from yoloworld import YOLOWorld, DetectionDrawer, read_class_embeddings, TextEmb
 import onnxruntime
 import numpy as np
 
-model_path = "./models/yolov8s-worldv2-original.onnx"
+model_path = "./models/yolov8s-worldv2-l-original.onnx"
 
 # get class embeddings
 text_embedder = TextEmbedder(device="cpu")

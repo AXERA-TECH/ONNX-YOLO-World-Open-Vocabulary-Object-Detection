@@ -2,7 +2,7 @@ import cv2
 # from imread_from_url import imread_from_url
 from yoloworld import YOLOWorld, DetectionDrawer, read_class_embeddings
 
-model_path = "models/yolov8s-worldv2-original.onnx"
+model_path = "models/yolov8s-worldv2-l-original.onnx"
 embed_path = "tmp/dog.npz"
 
 # Load class embeddings
