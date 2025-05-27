@@ -161,3 +161,4 @@ ultralytics
 third_party
 tmp
 *.tar
+*.npy
