@@ -21,4 +21,4 @@ fi
 cp yoloworld/ModelExporter_original.py yoloworld/ModelExporter.py
 
 python export_ultralytics_model.py --img_height 640 --img_width 640 --num_classes 4 --model_name yolov8s-worldv2.pt 
-onnxsim models/yolov8s-worldv2.onnx models/yolov8s-worldv2-original.onnx
+python3 -m onnxsim models/yolov8s-worldv2.onnx models/yolov8s-worldv2-original.onnx

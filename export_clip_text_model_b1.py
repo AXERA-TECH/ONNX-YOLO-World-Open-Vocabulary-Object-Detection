@@ -7,11 +7,11 @@ from yoloworld import TextEmbedder
 
 # Initialize text embedder
 text_embedder = TextEmbedder(device="cpu")
-text_token = text_embedder.tokenize(["person", "bicycle", "car", "motorcycle"])
+text_token = text_embedder.tokenize(["person"])
 
 
-torch.onnx.export(text_embedder, text_token, "models/yoloworld.vitb.txt.onnx")
-os.system("onnxsim models/yoloworld.vitb.txt.onnx models/yoloworld.vitb.txt.onnx")
+torch.onnx.export(text_embedder, text_token, "models/yoloworld.vitb.txt.b1.onnx")
+os.system("onnxsim models/yoloworld.vitb.txt.b1.onnx models/yoloworld.vitb.txt.b1.onnx")
 
 
 coco_names = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic light",
@@ -25,17 +25,17 @@ coco_names = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "trai
     "hair drier", "toothbrush"]
     
 
-os.makedirs("tokens", exist_ok=True)
+os.makedirs("tokens_b1", exist_ok=True)
 
-coco_names_group4 = [coco_names[i:i+4] for i in range(0, len(coco_names), 4)]
+# coco_names_group1 = [coco_names[i:i+4] for i in range(0, len(coco_names), 4)]
 
-for class_name_ in coco_names_group4:
+for class_name_ in coco_names:
     print(f"Saving {class_name_}")
     class_name = class_name_[0]
 
     # Get text embeddings
     text_token = text_embedder.tokenize(class_name_).cpu().numpy()
 
-    np.save(f"tokens/{class_name.replace(' ', '_')}.npy", text_token)
+    np.save(f"tokens_b1/{class_name.replace(' ', '_')}.npy", text_token)
 
-os.system("tar -cvf yolo_world_calib_token_data.tar tokens/*.npy")
+os.system("tar -cvf yolo_world_calib_token_data_b1.tar tokens_b1/*.npy")
