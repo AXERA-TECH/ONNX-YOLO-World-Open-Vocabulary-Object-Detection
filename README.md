@@ -34,7 +34,7 @@
 
 - 下载 `yolov8s-worldv2.pt`
 - 使用 `yoloworld/ModelExporter_original.py` 更新 `yoloworld/ModelExporter.py`
-- 导出 YOLO World 目标检测模型并保存到 `models/yolov8s-worldv2-original.onnx`
+- 导出 YOLO World 目标检测模型并保存到 `models/yolov8s-worldv2-l-original.onnx`
 
 ```
 ./export_original.sh
@@ -63,7 +63,7 @@ tar -cvf yolo_world_calib_txt_data.tar tmp/*.npy
 
 可以使用 `python save_class_embeddings.py` 来生成自定义的 4 分类的文本编码数据或者使用 `./tmp` 中已经存在的 4 分类文本编码数据
 
-- 图片检测模型：yolov8s-worldv2-original.onnx
+- 图片检测模型：yolov8s-worldv2-l-original.onnx
 - 输入图片：ssd_horse.jpg
 - 输入文本：dog.npz, 对应的 4 分类 `'dog' 'horse' 'sheep' 'cow'`
 
@@ -153,7 +153,7 @@ output_50/
 - 编译命令
 ```
 # yoloword
-pulsar2 build --config yoloworld.json --input models/yolov8s-worldv2-original.onnx --output_dir yolo_u16/ --output_name yolo_u16_ori.axmodel --npu_mode NPU3
+pulsar2 build --config yoloworld.json --input models/yolov8s-worldv2-l-original.onnx --output_dir yolo_u16/ --output_name yolo_u16_ori.axmodel --npu_mode NPU3
 
 # clip
 pulsar2 build --config yoloworld_clip.json --input yoloworld.vitb.txt.b1.onnx --output_dir clip_u16/ --output_name clip_b1_u16.axmodel --npu_mode NPU3
