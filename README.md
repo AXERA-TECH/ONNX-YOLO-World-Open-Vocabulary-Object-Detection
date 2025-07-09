@@ -123,4 +123,5 @@ python3 image_object_detection_onboard.py
 注：
 
     yolo对bbox的后处理可能影响模型精度，因此用./export_ax.sh得到不含后处理的模型，后处理过程在yoloworld/YOLOWorld.py的get_predictions函数中给出。后处理过程从原ultralytics中剥离，仅供参考。
+    
     如使用export_original.sh导出的onnx模型，请将yoloworld/YOLOWorld.py中的use_ax_model改为False，板上运行代码同理。
