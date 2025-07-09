@@ -4,6 +4,36 @@ import cv2
 import numpy as np
 import axengine as axe
 import copy
+import torch
+import torch.nn as nn
+
+
+class DFL(nn.Module):
+    """
+    Integral module of Distribution Focal Loss (DFL).
+
+    Proposed in Generalized Focal Loss https://ieeexplore.ieee.org/document/9792391
+    """
+
+    def __init__(self, c1: int = 16):
+        """
+        Initialize a convolutional layer with a given number of input channels.
+
+        Args:
+            c1 (int): Number of input channels.
+        """
+        super().__init__()
+        self.conv = nn.Conv2d(c1, 1, 1, bias=False).requires_grad_(False)
+        x = torch.arange(c1, dtype=torch.float)
+        self.conv.weight.data[:] = nn.Parameter(x.view(1, c1, 1, 1))
+        self.c1 = c1
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Apply the DFL module to input tensor and return transformed output."""
+        b, _, a = x.shape  # batch, channels, anchors
+        return self.conv(x.view(b, 4, self.c1, a).transpose(2, 1).softmax(1)).view(b, 4, a)
+        # return self.conv(x.view(b, self.c1, 4, a).softmax(1)).view(b, 4, a)
+
 
 class DetectionDrawer():
 
@@ -112,7 +142,7 @@ def compute_iou(box, boxes):
 
 class YOLOWorld:
 
-    def __init__(self, path, conf_thres=0.1, iou_thres=0.5):
+    def __init__(self, path, conf_thres=0.3, iou_thres=0.5):
         self.conf_threshold = conf_thres
         self.iou_threshold = iou_thres
 
@@ -136,7 +166,9 @@ class YOLOWorld:
 
         # Perform yoloworld on the image
         outputs = self.inference(input_tensor, class_embeddings)
-
+        use_ax_model = True
+        if use_ax_model:
+            outputs = self.get_predictions(outputs)
         return self.process_output(outputs)
 
     def prepare_input(self, image):
@@ -161,6 +193,43 @@ class YOLOWorld:
         # print(f"Inference time: {(time.perf_counter() - start) * 1000:.2f} ms")
         return outputs
 
+    def get_predictions(self,x):
+        nc = 4
+        reg_max = 16
+        stride = torch.tensor([8,16,32])
+        dfl = DFL(reg_max)
+        def make_anchors(feats, strides, grid_cell_offset=0.5):
+            """Generate anchors from features."""
+            anchor_points, stride_tensor = [], []
+            assert feats is not None
+            dtype, device = feats[0].dtype, feats[0].device
+            for i, stride in enumerate(strides):
+                _, _, h, w = feats[i].shape
+                sx = torch.arange(end=w, device=device, dtype=dtype) + grid_cell_offset  # shift x
+                sy = torch.arange(end=h, device=device, dtype=dtype) + grid_cell_offset  # shift y
+                sy, sx = torch.meshgrid(sy, sx, indexing="ij") if True else torch.meshgrid(sy, sx)
+                anchor_points.append(torch.stack((sx, sy), -1).view(-1, 2))
+                stride_tensor.append(torch.full((h * w, 1), stride, dtype=dtype, device=device))
+            return torch.cat(anchor_points), torch.cat(stride_tensor)
+        
+        def dist2bbox(distance, anchor_points, xywh=True, dim=-1):
+            """Transform distance(ltrb) to box(xywh or xyxy)."""
+            lt, rb = distance.chunk(2, dim)
+            x1y1 = anchor_points - lt
+            x2y2 = anchor_points + rb
+            if xywh:
+                c_xy = (x1y1 + x2y2) / 2
+                wh = x2y2 - x1y1
+                return torch.cat((c_xy, wh), dim)  # xywh bbox
+            return torch.cat((x1y1, x2y2), dim)  # xyxy bbox
+        x = [torch.from_numpy(arr).permute(0,3,1,2) for arr in x]
+        shape = x[0].shape  # BCHW
+        x_cat = torch.cat([xi.view(shape[0], nc + reg_max * 4, -1) for xi in x], 2)
+        anchors, strides = (x.transpose(0, 1) for x in make_anchors(x, stride, 0.5))
+        box, cls = x_cat.split((reg_max * 4, nc), 1)
+        dbox = dist2bbox(dfl(box), anchors.unsqueeze(0), xywh=True, dim=1) * strides
+        y = torch.cat((dbox, cls.sigmoid()), 1)
+        return (y.numpy(), x)
     def process_output(self, output):
         predictions = np.squeeze(output[0]).T
 
@@ -250,6 +319,7 @@ if __name__ == "__main__":
     img = cv2.imread(img_url)
     # Detect Objects
     boxes, scores, class_ids = yoloworld_detector(img, class_embeddings)
+    print(f"num of boxes:{len(scores)}")
     # Draw detections
     combined_img = drawer(img, boxes, scores, class_ids)
 
