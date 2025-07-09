@@ -71,6 +71,8 @@ tar -cvf yolo_world_calib_txt_data.tar tmp/*.npy
 
 ```
 python image_object_detection.py
+or
+python image_object_detection_with_clip.py
 ```
 
 ![](doc/img/ssd_horse_result.png)
