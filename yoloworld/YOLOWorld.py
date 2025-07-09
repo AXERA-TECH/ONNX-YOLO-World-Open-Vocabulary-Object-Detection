@@ -63,7 +63,7 @@ class YOLOWorld:
 
         # Perform yoloworld on the image
         outputs = self.inference(input_tensor, class_embeddings)
-        use_ax_model = False
+        use_ax_model = True
         if use_ax_model:
             outputs = self.get_predictions(outputs)
         return self.process_output(outputs)
