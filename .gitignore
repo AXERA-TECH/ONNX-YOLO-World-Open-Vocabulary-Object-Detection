@@ -157,8 +157,13 @@ cython_debug/
 *.pth
 *.npy
 *.bin
+*.png
 ultralytics
 third_party
 tmp
 *.tar
 *.npy
+*.zip
+doc/test_img/*
+output/*
+.vscode

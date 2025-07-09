@@ -2,7 +2,7 @@ import cv2
 # from imread_from_url import imread_from_url
 from yoloworld import YOLOWorld, DetectionDrawer, read_class_embeddings
 
-model_path = "models/yolov8s-worldv2-l-original.onnx"
+model_path = "models/yolov8s-worldv2-ax.onnx"
 embed_path = "tmp/dog.npz"
 
 # Load class embeddings
@@ -20,6 +20,7 @@ img = cv2.imread(img_url)
 
 # Detect Objects
 boxes, scores, class_ids = yoloworld_detector(img, class_embeddings)
+print(f"num of boxes:{len(scores)}")
 
 # Draw detections
 combined_img = drawer(img, boxes, scores, class_ids)
