@@ -4,14 +4,14 @@ from yoloworld import YOLOWorld, DetectionDrawer, read_class_embeddings, TextEmb
 import onnxruntime
 import numpy as np
 
-model_path = "./models/yolov8s-worldv2-l-original.onnx"
+model_path = "models/yolov8s-worldv2-l-original.onnx"
 
 # get class embeddings
 text_embedder = TextEmbedder(device="cpu")
 class_list = ["person", "horse", "car", "dog"]
 text_token = text_embedder.tokenize(class_list)
-np.save("./yoloworld_onboard/demo_text_token_onboard.npy",text_token)
-clip_path = "./models/yoloworld.vitb.txt.b1.onnx"
+np.save("yoloworld_onboard/demo_text_token_onboard.npy",text_token)
+clip_path = "models/yoloworld.vitb.txt.b1.onnx"
 clip_session = onnxruntime.InferenceSession(clip_path, providers=["CUDAExecutionProvider", "CPUExecutionProvider"])
 class_embeddings = [clip_session.run(['2202'],{'text_token': np.array([t])})[0][0][0] for t in text_token]
 class_embeddings = np.array([class_embeddings])

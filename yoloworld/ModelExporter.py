@@ -16,11 +16,14 @@ class ModelExporter(torch.nn.Module):
         self.device = device
 
     def forward(self, x, txt_feats):
-        outputs = self.model.predict(x, txt_feats=txt_feats)[1]
+        return self.model.predict(x, txt_feats=txt_feats)
+        '''
+         outputs = self.model.predict(x, txt_feats=txt_feats)[1]
         for i, output in enumerate(outputs):
             outputs[i] = torch.permute(output, (0, 2, 3, 1))
             print(output.shape," -> ", outputs[i].shape)
-        return outputs
+        return outputs       
+        '''
 
     def export(self, output_dir, model_name, img_width, img_height, num_classes):
         x = torch.randn(1, 3, img_width, img_height, requires_grad=False).to(self.device)
@@ -38,7 +41,8 @@ class ModelExporter(torch.nn.Module):
                               do_constant_folding=True,
                               opset_version=17,
                               input_names=["images", "txt_feats"],
-                              output_names=["stride8", "stride16", "stride32"],)
+                              output_names=["output"])
+                              # output_names=["stride8", "stride16", "stride32"],)
 
 
 if __name__ == "__main__":
