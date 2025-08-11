@@ -44,6 +44,6 @@
     }
   ],
   "compiler": {
-    "check": 0
+    "check": 3
   }
 }

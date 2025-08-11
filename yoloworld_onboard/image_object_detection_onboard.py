@@ -298,15 +298,16 @@ class YOLOWorld:
 
 
 if __name__ == "__main__":
-    model_path = "./yolo_u16_ori.axmodel"
+    model_path = "./yolo_u16_ax.axmodel"
     clip_path = "./clip_b1_u16.axmodel"
     text_token = np.load("./demo_text_token_onboard.npy")
 
     # get class embeddings
-    class_list = ["person", "dog", "car", "horse"]
+    class_list = ["person", "horse", "car", "dog"]
 
     clip_session = axe.InferenceSession(clip_path)
     class_embeddings = []
+    
     for t in text_token:
         t_embedding = copy.deepcopy(clip_session.run(['2202'],{'text_token': np.array([t])}))
         class_embeddings.append(t_embedding[0][0][0])
@@ -319,6 +320,7 @@ if __name__ == "__main__":
     img = cv2.imread(img_url)
     # Detect Objects
     boxes, scores, class_ids = yoloworld_detector(img, class_embeddings)
+    
     print(f"num of boxes:{len(scores)}")
     # Draw detections
     combined_img = drawer(img, boxes, scores, class_ids)

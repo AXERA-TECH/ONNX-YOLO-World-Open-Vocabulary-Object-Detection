@@ -167,3 +167,4 @@ tmp
 doc/test_img/*
 output/*
 .vscode
+*.axmodel
