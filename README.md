@@ -48,7 +48,7 @@
 - 生成 Pulsar2 编译 `yoloworld.vitb.txt.onnx` 依赖的量化校准数据 `yolo_world_calib_token_data.tar`
 
 ```
-python export_clip_text_model.py
+python export_clip_text_model_b1.py
 ```
 
 - 导出 YOLO World 检测模型输入的文本特征数据
@@ -92,15 +92,16 @@ python image_object_detection_with_clip.py
 - 编译命令
 ```
 # yoloword
-pulsar2 build --config yoloworld.json --input models/yolov8s-worldv2-ax.onnx --output_dir yolo_u16/ --output_name yolo_u16_ax.axmodel --npu_mode NPU3
+pulsar2 build --config build_config/yoloworld.json --input models/yolov8s-worldv2-ax.onnx --output_dir output/yolo_u16/ --output_name yolo_u16_ax.axmodel --npu_mode NPU3
 
 # clip
-pulsar2 build --config yoloworld_clip.json --input yoloworld.vitb.txt.b1.onnx --output_dir clip_u16/ --output_name clip_b1_u16.axmodel --npu_mode NPU3
+pulsar2 build --config build_config/yoloworld_clip_b1.json --input models/yoloworld.vitb.txt.b1.onnx --output_dir output/clip_u16/ --output_name clip_b1_u16.axmodel --npu_mode NPU3
 ```
 
 #### 数据准备
 clip模型的输入demo_text_token_onboard.npy,在运行image_object_detection_with_clip.py时保存
 
+准备相应的图像数据，如coco数据，作为yoloword模型的对分数据
 
 #### 上板运行
 

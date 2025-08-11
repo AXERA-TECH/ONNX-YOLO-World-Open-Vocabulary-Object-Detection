@@ -320,6 +320,7 @@ if __name__ == "__main__":
     img = cv2.imread(img_url)
     # Detect Objects
     boxes, scores, class_ids = yoloworld_detector(img, class_embeddings)
+    
     print(f"num of boxes:{len(scores)}")
     # Draw detections
     combined_img = drawer(img, boxes, scores, class_ids)

@@ -5,7 +5,7 @@
     "input_configs": [
       {
         "tensor_name": "images",
-        "calibration_dataset": "dataset_v04.zip",
+        "calibration_dataset": "coco_calib_image.tar",
         "calibration_size": 20,
         "calibration_mean": [0, 0, 0],
         "calibration_std": [255.0, 255.0, 255.0]
